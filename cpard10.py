@@ -9,13 +9,14 @@ def __wL(ser, string, encoding = 'utf-8'):
     print('sent', n, 'bytes')
 
 def writeTo(outputPath, string, device='/dev/ttyACM0', baud=115200):
+    escapedString = str(string.encode())
+    print(escapedString)
     ser = serial.Serial(device, baud, timeout=2)
     ser.write(b'\x03')
 
     __wL(ser, 'f = open("{}", "w")'.format(outputPath))
-    __wL(ser, 'f.write("{}")'.format(string))
+    __wL(ser, 'f.write({})'.format(escapedString))
     __wL(ser, 'f.close()')
-    __wL(ser, 'exit()')
     ser.close()
 
 def readFrom(inputPath, device='/dev/ttyACM0', baud=115200):
