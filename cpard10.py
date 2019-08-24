@@ -5,7 +5,7 @@ import re
 
 def __wL(ser, string, encoding = 'utf-8'):
     print('sending', string)
-    n = ser.write(bytes(string + '\r\n', encoding))
+    n = ser.write(string + b'\r\n')
     print('sent', n, 'bytes')
 
 def writeTo(outputPath, string, device='/dev/ttyACM0', baud=115200):
@@ -14,9 +14,9 @@ def writeTo(outputPath, string, device='/dev/ttyACM0', baud=115200):
     ser = serial.Serial(device, baud, timeout=2)
     ser.write(b'\x03')
 
-    __wL(ser, 'f = open("{}", "w")'.format(outputPath))
-    __wL(ser, 'f.write({})'.format(escapedString))
-    __wL(ser, 'f.close()')
+    __wL(ser, bytes('f = open("{}", "w")'.format(outputPath), 'utf-8'))
+    __wL(ser, bytes('f.write({})'.format(escapedString), 'utf-8'))
+    __wL(ser, b'f.close()')
     ser.close()
 
 def readFrom(inputPath, device='/dev/ttyACM0', baud=115200):
@@ -24,13 +24,13 @@ def readFrom(inputPath, device='/dev/ttyACM0', baud=115200):
     print(ser.getSettingsDict())
     ser.write(b'\x03')
 
-    __wL(ser, 'f = open("{}", "r")'.format(inputPath))
-    __wL(ser, 'data = f.read()')
-    __wL(ser, 'f.close()')
+    __wL(ser, bytes('f = open("{}", "r")'.format(inputPath), 'utf-8'))
+    __wL(ser, b'data = f.read()')
+    __wL(ser, b'f.close()')
 
     ser.flushInput()
 
-    __wL(ser, 'print("<\\x43ARD10DATA>" + data + "</\\x43ARD10DATA>")')
+    __wL(ser, b'print("<\\x43ARD10DATA>" + data + "</\\x43ARD10DATA>")')
 
 
     data = ser.read_until('</CARD10DATA>')
